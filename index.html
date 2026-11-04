@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>공정별 안전보호구 가이드</title>
+<style>
+  /* 현대차 전용 서체(HyundaiSans)는 로컬에 있으면 우선 사용하고, 없으면 기존 Freesentation으로 대체 */
+  @font-face{font-family:'Freesentation';src:url('fonts/Freesentation-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Freesentation';src:url('fonts/Freesentation-SemiBold.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Freesentation';src:url('fonts/Freesentation-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap;}
+  @font-face{font-family:'Freesentation';src:url('fonts/Freesentation-Black.ttf') format('truetype');font-weight:900;font-style:normal;font-display:swap;}
+
+  :root{
+    /* brand & state */
+    --navy:#002C5F;          /* 액션·활성 내비 */
+    --teal:#007FA8;          /* 선택/현재 상태 전용 */
+    /* surfaces */
+    --white:#FFFFFF;
+    --sand:#F6F3F2;
+    --sand-dark:#E4DCD3;
+    --footer:#1C1B1B;
+    /* text & lines */
+    --text:#000000;
+    --text-2:#666666;
+    --text-mid:#444444;
+    --text-muted:#999999;
+    --line:#E5E5E5;
+    --line-strong:#CCCCCC;
+
+    --font-head:'HyundaiSansHeadKR','Freesentation',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --font-text:'HyundaiSansTextKR','Freesentation',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --ease:.3s ease;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  html,body{margin:0;padding:0;max-width:100%;overflow-x:hidden;}
+  body{
+    background:var(--white);
+    color:var(--text);
+    font-family:var(--font-text);
+    font-weight:400;
+    letter-spacing:-0.4px;
+    min-height:100vh;min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    padding-left:env(safe-area-inset-left);
+    padding-right:env(safe-area-inset-right);
+  }
+  .inner{max-width:1180px;margin:0 auto;padding:0 30px;}
+
+  /* ---------- 스크롤 진행 바 (5px 틸) ---------- */
+  .progress{position:fixed;top:0;left:0;height:5px;width:0;background:var(--teal);z-index:99998;transition:width .1s linear;}
+
+  /* ---------- 상단 헤더 ---------- */
+  .gnb-top{background:var(--white);border-bottom:1px solid var(--line);}
+  .gnb-top .inner{height:64px;display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-family:var(--font-head);font-weight:900;font-size:18px;letter-spacing:.08em;color:var(--text);}
+  .brand small{font-family:var(--font-text);font-weight:400;font-size:13px;letter-spacing:-0.4px;color:var(--text-2);margin-left:10px;}
+
+  /* ---------- 히어로 (샌드 밴드) ---------- */
+  header.hero{background:var(--sand);}
+  header.hero .inner{padding:72px 30px 64px;}
+  .eyebrow{
+    display:block;margin-bottom:18px;
+    font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--navy);
+  }
+  h1{
+    font-family:var(--font-head);font-weight:900;
+    font-size:clamp(34px,7vw,58px);line-height:1.1;letter-spacing:-0.4px;
+    margin:0 0 20px;color:var(--text);text-wrap:balance;
+  }
+  h1 span{display:block;}
+  .hero p{font-size:16px;line-height:1.9;color:var(--text-2);margin:0;max-width:46ch;letter-spacing:-0.24px;}
+
+  /* ---------- 공정 선택 = 네이비 카테고리 바 ---------- */
+  .selector-wrap{background:var(--navy);position:sticky;top:0;z-index:50;}
+  .selector{
+    max-width:1180px;margin:0 auto;padding:0 30px;
+    display:flex;gap:0;overflow-x:auto;scrollbar-width:none;
+  }
+  .selector::-webkit-scrollbar{display:none;}
+  .selector button{
+    all:unset;cursor:pointer;box-sizing:border-box;
+    position:relative;flex:1 0 auto;min-width:88px;height:55px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-head);font-size:16px;color:rgba(255,255,255,.72);
+    transition:color var(--ease);white-space:nowrap;padding:0 18px;
+  }
+  .selector button::after{
+    content:"";position:absolute;left:18px;right:18px;bottom:0;height:4px;
+    background:var(--white);opacity:0;transition:opacity var(--ease);
+  }
+  .selector button:hover{color:var(--white);}
+  .selector button.active{color:var(--white);font-weight:700;}
+  .selector button.active::after{opacity:1;}
+  .selector button:focus-visible{outline:2px solid var(--white);outline-offset:-4px;}
+
+  /* ---------- 공정 섹션 ---------- */
+  section.process{display:none;}
+  section.process.visible{display:block;}
+
+  .intro{background:var(--sand);border-bottom:1px solid var(--line);}
+  .intro .inner{padding:56px 30px 52px;display:flex;align-items:center;gap:28px;}
+  .intro-icon{flex:0 0 auto;width:72px;height:72px;background:var(--white);display:flex;align-items:center;justify-content:center;color:var(--text);}
+  .intro-icon svg{width:36px;height:36px;}
+  .intro .tt{display:inline-block;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+  .intro h2{font-family:var(--font-head);font-weight:900;margin:0 0 12px;font-size:clamp(28px,5vw,44px);line-height:1.2;letter-spacing:-0.4px;}
+  .intro p{margin:0;font-size:16px;line-height:1.9;color:var(--text-2);letter-spacing:-0.24px;max-width:62ch;}
+
+  .list-sec{padding:100px 0 120px;}
+  .sec-head{text-align:center;margin-bottom:48px;}
+  .sec-head h3{font-family:var(--font-head);font-weight:900;margin:0 0 14px;font-size:clamp(28px,5vw,44px);line-height:1.3;letter-spacing:-0.4px;}
+  .sec-head p{margin:0;font-size:16px;line-height:1.9;color:var(--text-2);letter-spacing:-0.24px;}
+  .count-chip{
+    display:inline-flex;align-items:center;justify-content:center;
+    height:30px;padding:0 16px;margin-bottom:18px;border-radius:15px;
+    background:var(--teal);color:var(--white);
+    font-size:14px;font-weight:600;
+  }
+
+  /* ---------- 보호구 카드 (직각, 그림자 없음, hover = 샌드) ---------- */
+  .ppe-grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line-strong);}
+  .ppe-card{
+    display:flex;align-items:flex-start;gap:20px;
+    padding:30px 28px;background:var(--white);
+    border-bottom:1px solid var(--line);
+    transition:background var(--ease);
+  }
+  .ppe-card:nth-child(odd){border-right:1px solid var(--line);}
+  .ppe-card:hover{background:var(--sand);}
+  .ppe-icon{flex:0 0 auto;width:48px;height:48px;color:var(--text);display:flex;align-items:center;justify-content:center;}
+  .ppe-icon svg{width:40px;height:40px;stroke-width:1.5;}
+  .ppe-body{flex:1;min-width:0;}
+  .ppe-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .rank{flex:0 0 auto;width:26px;height:26px;background:var(--teal);color:var(--white);font-family:var(--font-head);font-size:13px;display:flex;align-items:center;justify-content:center;}
+  .ppe-body h4{margin:0;font-family:var(--font-head);font-weight:700;font-size:20px;line-height:26px;letter-spacing:-0.24px;}
+  .ppe-body p{margin:0;font-size:16px;line-height:1.75;color:var(--text-2);letter-spacing:-0.24px;}
+  /* 홀수 개일 때 마지막 카드 */
+  .ppe-card:last-child:nth-child(odd){border-right:0;grid-column:1 / -1;}
+
+  /* ---------- 푸터 ---------- */
+  footer{background:var(--footer);}
+  footer .inner{padding:60px 30px;}
+  footer .f-title{font-family:var(--font-head);font-weight:700;font-size:16px;color:var(--white);margin:0 0 14px;}
+  footer p{font-size:14px;line-height:1.9;color:var(--text-muted);margin:0;letter-spacing:normal;}
+  footer .copy{margin-top:28px;font-size:12px;}
+
+  :focus-visible{outline:2px solid var(--navy);outline-offset:2px;}
+
+  /* ---------- 반응형: 태블릿 ≤1024 / 모바일 ≤767 ---------- */
+  @media (max-width:1024px){
+    .list-sec{padding:80px 0 96px;}
+  }
+  @media (max-width:767px){
+    .inner,.selector{padding-left:20px;padding-right:20px;}
+    header.hero .inner{padding:48px 20px 44px;}
+    .gnb-top .inner{height:56px;}
+    .selector button{min-width:0;flex:1 0 auto;padding:0 14px;font-size:15px;}
+    .selector button::after{left:14px;right:14px;}
+    .intro .inner{padding:40px 20px 36px;flex-direction:column;align-items:flex-start;gap:20px;}
+    .intro-icon{width:60px;height:60px;}
+    .list-sec{padding:56px 0 72px;}
+    .sec-head{text-align:left;margin-bottom:28px;}
+    .ppe-grid{grid-template-columns:1fr;}
+    .ppe-card{padding:24px 4px;gap:16px;}
+    .ppe-card:nth-child(odd){border-right:0;}
+    .ppe-card:hover{background:var(--white);}
+    .ppe-icon svg{width:34px;height:34px;}
+    footer .inner{padding:44px 20px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="gnb-top">
+  <div class="inner">
+    <div class="brand">SAFETY<small>안전보호구 가이드</small></div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="inner">
+    <span class="eyebrow">Safety Gear Guide</span>
+    <h1><span>공정별 필수</span><span>안전보호구</span></h1>
+    <p>공정을 선택하면 착용해야 할 보호구와 그 이유를 확인할 수 있습니다.</p>
+  </div>
+</header>
+
+<div class="selector-wrap">
+  <nav class="selector" id="selector" aria-label="공정 선택">
+    <button data-id="press">프레스</button>
+    <button data-id="welding">용접</button>
+    <button data-id="forklift">지게차</button>
+    <button data-id="hoist">호이스트</button>
+    <button data-id="maintenance">공무</button>
+  </nav>
+</div>
+
+<main id="main"></main>
+
+<footer>
+  <div class="inner">
+    <div class="f-title">공정별 필수 보호구 착용 가이드라인</div>
+    <p>작업 전 보호구 상태를 반드시 점검한 뒤 착용하세요.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    /* 모노라인 아이콘 (1.5px 스트로크, 검정) */
+    var S = function(inner){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>'; };
+    var ICON = {
+      helmet: S('<path d="M4 15c0-5 3.6-9 8-9s8 4 8 9"/><path d="M2.6 15h18.8"/><path d="M2.6 15c0 1.7 1.1 2.4 2.4 2.4h14c1.3 0 2.4-.7 2.4-2.4"/>'),
+      glove:  S('<path d="M8 11V5.3a1.4 1.4 0 0 1 2.8 0V10"/><path d="M10.8 10V4.3a1.4 1.4 0 0 1 2.8 0v6"/><path d="M13.6 10.3V5.3a1.4 1.4 0 0 1 2.8 0v7"/><path d="M5.6 12.2c-1.1 0-2 .9-2 2.2v2.5c0 2.7 2.2 4.9 5 4.9h3.4c2.9 0 5.2-2.3 5.2-5.1v-6.4"/>'),
+      ear:    S('<path d="M4.2 13v-1.3a7.8 7.8 0 0 1 15.6 0V13"/><rect x="2.4" y="12" width="4" height="7.2" rx="2"/><rect x="17.6" y="12" width="4" height="7.2" rx="2"/>'),
+      shoe:   S('<path d="M8 3v9.3c0 .8-.4 1.5-1.1 1.9L4 16c-.9.6-1.4 1.5-1.4 2.6V20h16.8c.6 0 1.1-.5 1.1-1.1v-1.7c0-1-.7-1.9-1.6-2.2l-5.6-1.8c-.6-.2-1-.8-1-1.4V3"/>'),
+      eye:    S('<circle cx="7.6" cy="12" r="4"/><circle cx="16.4" cy="12" r="4"/><path d="M11.4 12h1.2"/>'),
+      mask:   S('<path d="M4.2 11.3c0-1 .4-1.8 1.1-2.3 2.1-1.5 4.6-2.2 6.7-2.2s4.6.7 6.7 2.2c.7.5 1.1 1.3 1.1 2.3v2.1c0 2.8-3.5 5-7.8 5s-7.8-2.2-7.8-5z"/>'),
+      apron:  S('<path d="M9.2 3h5.6l-1 4h-3.6z"/><path d="M7.8 7h8.4l1.5 11.6a1.1 1.1 0 0 1-1.1 1.2H7.4a1.1 1.1 0 0 1-1.1-1.2z"/>')
+    };
+    var PROC_ICON = {
+      press:  S('<path d="M5 9l3-3h8l3 3"/><rect x="5" y="9" width="14" height="10" rx="1.5"/>'),
+      welding:S('<path d="M13 4l7 7-2.2 2.2-7-7z"/><path d="M11.8 9.2 5 16v3h3l6.8-6.8"/>'),
+      forklift:S('<path d="M3 19V9"/><path d="M3 9l3 2"/><path d="M6 11v8"/><rect x="6" y="15" width="7" height="4" rx="1"/><path d="M13 17h4l2-5"/>'),
+      hoist:  S('<path d="M5 5h14"/><path d="M12 5v9"/><path d="M12 14a3 3 0 1 0 -3 3"/>'),
+      maintenance:S('<path d="M9 15 4.5 19.5"/><path d="M7 7a3.5 3.5 0 0 0 4.9 4.9l6.1 6.1 2-2-6.1-6.1A3.5 3.5 0 0 0 9 4.6"/>')
+    };
+
+    var DATA = [
+      { id:'press', en:'PRESS', title:'프레스 작업',
+        desc:'프레스 작업은 중량물 취급과 날카로운 철판의 타발, 기계 작동 소음이 상존하는 공정입니다. 협착·절단·성형 위험이 가장 높은 작업 하나입니다.',
+        ppe:[
+          ['helmet','안전모','금형 교체나 작업 중 발생할 수 있는 낙하물이나, 설비 구조물과의 충돌 위험으로부터 머리를 보호합니다.'],
+          ['glove','장갑','투입·배출되는 철판의 날카로운 단면으로 인한 베임 사고와 고온으로부터 손을 보호합니다.'],
+          ['ear','귀마개','프레스 타발 시 발생하는 순간적이고 반복적인 고소음으로부터 청력을 보호합니다.'],
+          ['shoe','안전화','중량물(철판, 완제품 등)의 낙하 및 충격으로부터 발등과 발가락을 보호합니다.']
+        ]},
+      { id:'welding', en:'WELDING', title:'용접 작업',
+        desc:'용접 작업은 고열, 불티, 유해 가스, 강력한 빛이 동시다발적으로 발생하는 고위험 공정입니다.',
+        ppe:[
+          ['eye','보안경','강력한 용접 아크광과 사방으로 튀는 불티, 쇳물로부터 각막 손상과 시력 저하를 방지합니다.'],
+          ['ear','귀마개','주변 설비 가동 및 용접 장비에서 발생하는 고소음으로부터 청력을 보호합니다.'],
+          ['mask','마스크','용접 시 발생하는 흄(Fume), 미세 분진 및 유해가스가 폐로 흡입되는 것을 차단합니다.'],
+          ['glove','장갑','용접부의 고온, 튀는 스파크, 날카로운 모재로부터 1차적으로 손을 보호합니다.'],
+          ['apron','앞치마','튀는 스파크와 불티, 복사열이 작업복에 착화되거나 피부에 닿는 것을 방지합니다.'],
+          ['shoe','안전화','낙하물이나 충격으로부터 발을 보호할 뿐만 아니라, 튀는 불티로 인한 발등 화상을 방지합니다.']
+        ]},
+      { id:'forklift', en:'FORKLIFT', title:'지게차 작업',
+        desc:'물류의 이동을 담당하며 중량물 취급 및 시야 확보가 중요한 공정입니다.',
+        ppe:[
+          ['helmet','안전모','자재 하역 중 발생할 수 있는 낙하물이나, 지게차 승하차 및 창고 내 구조물과의 충돌로부터 머리를 보호합니다.'],
+          ['glove','장갑','파렛트 정리, 거칠거나 날카로운 자재를 직접 손으로 취급할 때 발생하는 찰과상 및 베임을 방지합니다.'],
+          ['ear','귀마개','지게차 엔진 소음, 경고음, 공장 내 주변 설비 소음으로부터 청력을 보호합니다.'],
+          ['shoe','안전화','파렛트나 무거운 자재의 낙하, 또는 지게차 바퀴에 의한 협착 위험으로부터 발등과 발가락을 보호합니다.']
+        ]},
+      { id:'hoist', en:'HOIST', title:'호이스트 작업',
+        desc:'공중에서 무거운 자재를 결속하고 이동시키는 작업으로 낙하 위험이 가장 큽니다.',
+        ppe:[
+          ['helmet','안전모','상공에서 이동하는 중량물, 호이스트 훅(Hook), 와이어 등의 충돌 및 낙하물로부터 머리를 보호합니다.'],
+          ['glove','장갑','슬링벨트나 철제 와이어로프를 취급하고 중량물을 결속할 때 와이어 가시에 찔리거나 베이는 것을 방지합니다.'],
+          ['ear','귀마개','호이스트 모터 가동 소음 및 철제 중량물 간의 강한 마찰·충격 소음으로부터 청력을 보호합니다.'],
+          ['shoe','안전화','취급 중인 초중량물이 흔들리거나 낙하할 경우 발등과 발가락이 으스러지는 심각한 부상을 방지합니다.']
+        ]},
+      { id:'maintenance', en:'MAINTENANCE', title:'공무 작업',
+        desc:'설비의 유지보수 및 수리를 담당하는 공무는 다양한 기계적, 화학적 위험 요소에 무작위로 노출됩니다.',
+        ppe:[
+          ['helmet','안전모','수리를 위해 설비 하부나 좁은 공간 진입 시 머리 부딪힘과 부품 낙하로부터 보호합니다.'],
+          ['eye','보안경','그라인딩, 절단, 타격 작업 시 사방으로 비산하는 금속 파편이나 먼지로부터 시력을 보호합니다.'],
+          ['ear','귀마개','전동 공구 사용 및 수리 중인 공장 내 복합적인 소음으로부터 청력을 보호합니다.'],
+          ['mask','마스크','먼지가 쌓인 설비 청소나 유기용제, 윤활유 등 화학물질 취급 시 분진과 유증기 흡입을 방지합니다.'],
+          ['glove','장갑','날카로운 기계 내부 부품, 고온의 모터, 기름때 등으로부터 베임 및 화상, 오염을 방지합니다.'],
+          ['apron','앞치마','절삭유, 화학물질 튐, 그라인더 불티 등으로부터 작업복과 신체를 보호합니다.'],
+          ['shoe','안전화','무거운 수리 공구나 교체 부품의 낙하, 바닥에 흩어진 날카로운 쇳조각 찔림으로부터 발을 보호합니다.']
+        ]}
+    ];
+
+    var main = document.getElementById('main');
+    main.innerHTML = DATA.map(function(p){
+      var cards = p.ppe.map(function(x, i){
+        return '<article class="ppe-card">'
+          + '<div class="ppe-icon">'+ICON[x[0]]+'</div>'
+          + '<div class="ppe-body"><div class="ppe-top"><span class="rank">'+(i+1)+'</span><h4>'+x[1]+'</h4></div><p>'+x[2]+'</p></div>'
+          + '</article>';
+      }).join('');
+      return '<section id="'+p.id+'" class="process">'
+        + '<div class="intro"><div class="inner">'
+        +   '<div class="intro-icon">'+PROC_ICON[p.id]+'</div>'
+        +   '<div><span class="tt">'+p.en+'</span><h2>'+p.title+'</h2><p>'+p.desc+'</p></div>'
+        + '</div></div>'
+        + '<div class="list-sec"><div class="inner">'
+        +   '<div class="sec-head"><span class="count-chip">착용 전 필수 보호구 '+p.ppe.length+'종</span><h3>필수 보호구</h3><p>작업 전 아래 보호구를 모두 착용했는지 확인하세요.</p></div>'
+        +   '<div class="ppe-grid">'+cards+'</div>'
+        + '</div></div>'
+        + '</section>';
+    }).join('');
+
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('#selector button'));
+    var sections = Array.prototype.slice.call(document.querySelectorAll('section.process'));
+
+    function show(id){
+      buttons.forEach(function(b){
+        var on = b.dataset.id === id;
+        b.classList.toggle('active', on);
+        if(on){ b.setAttribute('aria-current','true'); } else { b.removeAttribute('aria-current'); }
+      });
+      sections.forEach(function(s){ s.classList.toggle('visible', s.id === id); });
+      var act = buttons.filter(function(b){ return b.dataset.id === id; })[0];
+      if(act && act.scrollIntoView){ try{ act.scrollIntoView({block:'nearest', inline:'center'}); }catch(e){} }
+    }
+
+    buttons.forEach(function(b){
+      b.addEventListener('click', function(){
+        show(b.dataset.id);
+        history.replaceState(null, '', '#' + b.dataset.id);
+      });
+    });
+
+    var initial = (location.hash || '').replace('#','');
+    var valid = sections.some(function(s){ return s.id === initial; });
+    show(valid ? initial : 'press');
+
+    /* 스크롤 진행 바 */
+    var bar = document.getElementById('progress');
+    function onScroll(){
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? Math.min(100, window.scrollY / h * 100) : 0) + '%';
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    onScroll();
+  })();
+</script>
+</body>
+</html>
